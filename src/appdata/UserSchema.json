@@ -1,0 +1,26 @@
+{
+    "properties": {
+      "firstName": {
+        "type": "string",
+        "title": "First Name"
+        
+      },
+      "lastName": {
+        "title": "Last Name",
+        "type": "string"
+      },
+      "age": {
+        "type": "number",
+        "default":0
+      },
+      "birthday": {
+        "type": "string",
+        "format":"date"
+      },
+      "email": {
+        "type": "string",
+        "format": "email",
+        "pattern":".*\\.*"
+      }
+    }
+  }

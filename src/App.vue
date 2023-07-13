@@ -25,6 +25,10 @@ import { rankWith, isStringControl } from '@jsonforms/core'
 const myStyles = mergeStyles(defaultStyles, { control: { label: "mylabel" } });
 import moment from 'moment';
 
+import schema from './appdata/UserSchema.json';
+import uischema from './appdata/UserUISchema.json';
+
+
 const renderers = [
   ...vanillaRenderers,
   // here you can add custom renderers
@@ -37,103 +41,6 @@ const renderers = [
   }
 ];
 
-const schema = {
-  properties: {
-    firstName: {
-      type: "string",
-      description: "First Name",
-      
-    },
-    lastName: {
-      title: "Last Name",
-      type: "string",
-    },
-    age: {
-      type: "number",
-      default:0,
-    },
-    birthday: {
-      type: "string",
-      format:"date",
-    },
-    email: {
-      type: "string",
-      format: 'email',
-      pattern: '.*example\\.com'
-    }
-  },
-};
-
-const uischema = {
-  type: "Categorization",
-  elements: [
-    {
-      "type": "Category",
-      "label":"Basic Info",
-      "elements": [
-      {
-          type: "Control",
-          scope: "#/properties/firstName",
-          label:"fname",
-          rule: {
-            "effect": "HIDE",
-            "condition": {
-              "scope": "#/properties/firstName",
-              "schema": { enum: ["foo", "bar"] }
-            }
-          }
-        },
-        {
-          type: "Control",
-          scope: "#/properties/lastName",
-          label:"Lname",
-          rule: {
-          "effect": "DISABLE",
-          "condition": {
-            "scope": "#/properties/lastName",
-            "schema": { enum: ["foo", "2017-12-18"] }
-          }
-      }
-        },
-        {
-          "type": "Control",
-          "label": "birthday",
-          "scope": "#/properties/birthday"
-        },
-        {
-          "type": "Control",
-          "scope": "#/properties/age",
-          "rule": {
-            "effect": "HIDE",
-            "condition": {
-              "scope": "#/properties/age",
-            }
-          }
-        },
-        {
-          "type": "Control",
-          "label": "email",
-          "scope": "#/properties/email",
-          "rule": {
-            "effect": "HIDE",
-            "condition": {
-              "scope": "#/properties/age",
-              "schema": {
-                "enum": [0,1,2,3,4,5,6,7,8,9,10,11,12],
-              }
-            }
-          }
-        }
-      ]
-    },
-    {
-      "type": "Category",
-      "label": "Additional",
-      "elements": [],
-    },
-  ]
-};
-
 export default defineComponent({
   name: "App",
   components: {
@@ -145,7 +52,7 @@ export default defineComponent({
       renderers: Object.freeze(renderers),
       data: {
         firstName: "",
-        lastName: "Last Name",
+        lastName: "",
         birthday:moment().format("YYYY-MM-DD"),
         email: "",
         age:0,
@@ -156,16 +63,12 @@ export default defineComponent({
   },
   methods: {
     onChange(event: JsonFormsChangeEvent) {
-      console.log(event)
       this.data = event.data;
-      this.ageCheck(18,event.data.birthday)
+      this.ageCheck(event.data.birthday);
     },
-    ageCheck (minAge:number=18,birthdate:string) {
-      console.log("minAge",minAge)
-      console.log("birthdate",birthdate)
+    ageCheck (birthdate:string) {
       const computedAge = moment().diff(birthdate, 'years');
       this.data.age = computedAge;
-      
     }
   },
   provide() {
@@ -177,19 +80,31 @@ export default defineComponent({
 </script>
 
 <style>
+body{
+  background: #6bbaff4f;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
   margin-left: 120px;
   margin-right: 120px;
+  width: 100%;
+  background: #0072ff0a;
+  border-radius: 25px;
+  filter: drop-shadow(6px 3px 5px);
 }
 
 .mylabel {
-  color: darkslategrey;
+  margin-right: 1em;
+  display: inline-flex;
+  min-width: 5em;
+  color: white;
+  font-family: monospace;
+  font-size: 1.1em;
+  font-weight: 800;
 }
 
 .vertical-layout {
@@ -198,11 +113,21 @@ export default defineComponent({
 }
 
 .myform {
-  width: 640px;
+  width: 100%;
   margin: 0 auto;
 }
 
 .text-area {
   min-height: 80px;
+}
+
+.input{
+    width: 230px;
+    border-radius: 5px;
+    height: 2em;
+}
+.control{
+  display: inline-flex;
+  margin-left: 1em;
 }
 </style>
